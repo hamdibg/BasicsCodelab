@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
             BasicsCodelabTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(
-                            name = "Android",
+                            name = "Hamdi",
                             modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -38,10 +38,10 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
     )
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, name = "Text preview")
 @Composable
 fun GreetingPreview() {
     BasicsCodelabTheme {
-        Greeting("Android")
+        Greeting("Hamdi")
     }
 }
