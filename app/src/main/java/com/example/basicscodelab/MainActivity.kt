@@ -25,6 +25,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.animateDpAsState
+
 import com.example.basicscodelab.ui.theme.BasicsCodelabTheme
 
 class MainActivity : ComponentActivity() {
@@ -35,37 +39,6 @@ class MainActivity : ComponentActivity() {
                 MyApp(modifier = Modifier.fillMaxSize())
             }
         }
-    }
-}
-
-@Composable
-fun OnboardingScreen(
-    onContinueClicked: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Welcome to the Basics Codelab!")
-        Button(
-            modifier = Modifier
-                .padding(vertical = 24.dp),
-            onClick = onContinueClicked
-        ) {
-            Text("Continue")
-        }
-    }
-
-}
-
-@Preview(showBackground = true, widthDp = 320, heightDp = 320)
-@Composable
-fun OnboardingPreview() {
-    BasicsCodelabTheme {
-        OnboardingScreen(onContinueClicked = {}) // Do nothing on click.
     }
 }
 
@@ -84,6 +57,28 @@ fun MyApp(modifier: Modifier = Modifier) {
 }
 
 @Composable
+fun OnboardingScreen(
+    onContinueClicked: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("Welcome to the Basics Codelab!")
+        Button(
+            modifier = Modifier.padding(vertical = 24.dp),
+            onClick = onContinueClicked
+        ) {
+            Text("Continue")
+        }
+    }
+
+}
+
+@Composable
 private fun Greetings(
     modifier: Modifier = Modifier,
     names: List<String> = List(1000) { "$it" }
@@ -95,21 +90,36 @@ private fun Greetings(
     }
 }
 
+@Preview(showBackground = true, widthDp = 320, heightDp = 320)
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
+fun OnboardingPreview() {
+    BasicsCodelabTheme {
+        OnboardingScreen(onContinueClicked = {})
+    }
+}
+
+@Composable
+private fun Greeting(name: String, modifier: Modifier = Modifier) {
+
     var expanded by rememberSaveable { mutableStateOf(false) }
-    val extraPadding = if (expanded) 48.dp else 0.dp
+
+    val extraPadding by animateDpAsState(
+        if (expanded) 48.dp else 0.dp,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        )
+    )
     Surface(
         color = MaterialTheme.colorScheme.primary,
         modifier = modifier.padding(vertical = 4.dp, horizontal = 8.dp)
     ) {
         Row(modifier = Modifier.padding(24.dp)) {
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(bottom = extraPadding)
+            Column(modifier = Modifier
+                .weight(1f)
+                .padding(bottom = extraPadding.coerceAtLeast(0.dp))
             ) {
-                Text(text = "Hello ")
+                Text(text = "Hello, ")
                 Text(text = name)
             }
             ElevatedButton(
@@ -121,19 +131,18 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
     }
 }
 
+@Preview(showBackground = true, widthDp = 320)
+@Composable
+fun GreetingPreview() {
+    BasicsCodelabTheme {
+        Greetings()
+    }
+}
+
 @Preview
 @Composable
 fun MyAppPreview() {
     BasicsCodelabTheme {
         MyApp(Modifier.fillMaxSize())
-    }
-}
-
-
-@Preview(showBackground = true, widthDp = 320)
-@Composable
-fun GreetingsPreview() {
-    BasicsCodelabTheme {
-        Greetings()
     }
 }
