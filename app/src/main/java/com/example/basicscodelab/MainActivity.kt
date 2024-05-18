@@ -150,6 +150,7 @@ private fun CardContent(name: String) {
         }
         IconButton(onClick = { expanded = !expanded }) {
             Icon(
+                //problem while importing ExpandLess :/
                 imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
                 contentDescription = if (expanded) {
                     stringResource(R.string.show_less)
