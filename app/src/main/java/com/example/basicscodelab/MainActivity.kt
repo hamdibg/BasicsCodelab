@@ -28,8 +28,16 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.animation.core.animateDpAsState
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import androidx.compose.animation.animateContentSize
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.ui.res.stringResource
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExpendLess
+import androidx.compose.material.icons.filled.ExpandMore
 import com.example.basicscodelab.ui.theme.BasicsCodelabTheme
 
 class MainActivity : ComponentActivity() {
@@ -45,10 +53,9 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MyApp(modifier: Modifier = Modifier) {
-
     var shouldShowOnboarding by rememberSaveable { mutableStateOf(true) }
 
-    Surface(modifier) {
+    Surface(modifier, color = MaterialTheme.colorScheme.background) {
         if (shouldShowOnboarding) {
             OnboardingScreen(onContinueClicked = { shouldShowOnboarding = false })
         } else {
@@ -62,7 +69,6 @@ fun OnboardingScreen(
     onContinueClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -76,7 +82,6 @@ fun OnboardingScreen(
             Text("Continue")
         }
     }
-
 }
 
 @Composable
@@ -101,37 +106,57 @@ fun OnboardingPreview() {
 
 @Composable
 private fun Greeting(name: String, modifier: Modifier = Modifier) {
-
-    var expanded by rememberSaveable { mutableStateOf(false) }
-
-    val extraPadding by animateDpAsState(
-        if (expanded) 48.dp else 0.dp,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessLow
-        )
-    )
-    Surface(
-        color = MaterialTheme.colorScheme.primary,
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primary
+        ),
         modifier = modifier.padding(vertical = 4.dp, horizontal = 8.dp)
     ) {
-        Row(modifier = Modifier.padding(24.dp)) {
-            Column(modifier = Modifier
+        CardContent(name)
+    }
+}
+
+@Composable
+private fun CardContent(name: String) {
+    var expanded by rememberSaveable { mutableStateOf(false) }
+
+    Row(
+        modifier = Modifier
+            .padding(12.dp)
+            .animateContentSize(
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                    stiffness = Spring.StiffnessLow
+                )
+            )
+    ) {
+        Column(
+            modifier = Modifier
                 .weight(1f)
-                .padding(bottom = extraPadding.coerceAtLeast(0.dp))
-            ) {
+                .padding(12.dp)
+        ) {
+            Text(text = "Hello, ")
+            Text(
+                text = name, style = MaterialTheme.typography.headlineMedium.copy(
+                    fontWeight = FontWeight.ExtraBold
+                )
+            )
+            if (expanded) {
                 Text(
-                    text = name,
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontWeight = FontWeight.ExtraBold
-                    )
+                    text = ("Composem ipsum color sit lazy, " +
+                            "padding theme elit, sed do bouncy. ").repeat(4),
                 )
             }
-            ElevatedButton(
-                onClick = { expanded = !expanded }
-            ) {
-                Text(if (expanded) "Show less" else "Show more")
-            }
+        }
+        IconButton(onClick = { expanded = !expanded }) {
+            Icon(
+                imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
+                contentDescription = if (expanded) {
+                    stringResource(R.string.show_less)
+                } else {
+                    stringResource(R.string.show_more)
+                }
+            )
         }
     }
 }
